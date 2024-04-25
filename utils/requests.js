@@ -3,7 +3,7 @@ const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || null;
 // Fetch all properties
 async function fetchProperties() {
   try {
-    // Handle the case where the domainh is not available yet
+    // Handle the case where the domain is not available yet
 
     if (!apiDomain) {
       return [];
