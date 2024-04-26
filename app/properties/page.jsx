@@ -3,7 +3,7 @@ import PropertCard from '@/components/PropertyCard';
 import { fetchProperties } from '@/utils/requests';
 
 const PropertiesPage = async () => {
-  const { properties } = await fetchProperties();
+  const properties = await fetchProperties();
 
   // Sort properties by date
   properties.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
