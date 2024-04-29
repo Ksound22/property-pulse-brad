@@ -31,13 +31,13 @@ export const POST = async (request) => {
 
     const formData = await request.formData();
 
-    // access all values from amenities and images
+    // Access all values from amenities and images
     const amenities = formData.getAll('amenities');
     const images = formData
       .getAll('images')
       .filter((image) => image.name !== '');
 
-    // Create property data object for db
+    // Create propertyData object for database
     const propertyData = {
       type: formData.get('type'),
       name: formData.get('name'),
@@ -48,19 +48,15 @@ export const POST = async (request) => {
         state: formData.get('location.state'),
         zipcode: formData.get('location.zipcode'),
       },
-
       beds: formData.get('beds'),
       baths: formData.get('baths'),
       square_feet: formData.get('square_feet'),
-
       amenities,
-
       rates: {
         weekly: formData.get('rates.weekly'),
         monthly: formData.get('rates.monthly'),
-        nightly: formData.get('rates.nightly'),
+        nightly: formData.get('rates.nightly.'),
       },
-
       seller_info: {
         name: formData.get('seller_info.name'),
         email: formData.get('seller_info.email'),
@@ -69,21 +65,22 @@ export const POST = async (request) => {
       owner: userId,
     };
 
-    // Upload images to cloundinary
+    // Upload image(s) to Cloudinary
     const imageUploadPromises = [];
+
     for (const image of images) {
       const imageBuffer = await image.arrayBuffer();
       const imageArray = Array.from(new Uint8Array(imageBuffer));
       const imageData = Buffer.from(imageArray);
 
-      // COnvert the image data to base64
+      // Convert the image data to base64
       const imageBase64 = imageData.toString('base64');
 
-      // Make request to upload  to cloudinary
+      // Make request to upload to Cloudinary
       const result = await cloudinary.uploader.upload(
         `data:image/png;base64,${imageBase64}`,
         {
-          folder: 'propertyPulse',
+          folder: 'propertypulse',
         }
       );
 
@@ -91,8 +88,7 @@ export const POST = async (request) => {
 
       // Wait for all images to upload
       const uploadedImages = await Promise.all(imageUploadPromises);
-
-      // Add uploaded images to the property data object
+      // Add uploaded images to the propertyData object
       propertyData.images = uploadedImages;
     }
 
